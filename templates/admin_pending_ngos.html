@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pending NGOs | Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style1.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        
+        .admin-dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .dashboard-header {
+            background: linear-gradient(135deg, #2e7d32, #1b5e20);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .section h2 {
+            color: #2e7d32;
+            margin-top: 0;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: #f1f8e9;
+            font-weight: bold;
+        }
+        
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-right: 5px;
+        }
+        
+        .btn-approve {
+            background: #4CAF50;
+        }
+        
+        .btn-reject {
+            background: #f44336;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .logout-btn {
+            background: #c62828;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        
+        .logout-btn:hover {
+            background: #b71c1c;
+        }
+        
+        .action-form {
+            display: inline-block;
+        }
+        
+        .ngo-details {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .document-link {
+            display: inline-block;
+            background: #2196f3;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.9em;
+        }
+        
+        .document-link:hover {
+            background: #1976d2;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            color: #ccc;
+            margin-bottom: 15px;
+        }
+        
+        .rejection-form {
+            display: none;
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        
+        .rejection-input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        .rejection-btn {
+            background: #f44336;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-dashboard">
+        <div class="dashboard-header">
+            <h1><i class="fas fa-tachometer-alt"></i> Admin Dashboard</h1>
+            <p>Manage pending NGO registrations</p>
+        </div>
+        
+        <div class="section">
+            <h2><i class="fas fa-hand-holding-heart"></i> Pending NGO Registrations</h2>
+            
+            {% if ngos %}
+            {% for ngo in ngos %}
+            <div class="ngo-details">
+                <h3>{{ ngo.name }}</h3>
+                <p><strong>Registration Number:</strong> {{ ngo.registration_number }}</p>
+                <p><strong>Contact Person:</strong> {{ ngo.contact_person }}</p>
+                <p><strong>Email:</strong> {{ ngo.email }}</p>
+                <p><strong>Phone:</strong> {{ ngo.phone }}</p>
+                <p><strong>Address:</strong> {{ ngo.address[:100] }}{% if ngo.address|length > 100 %}...{% endif %}</p>
+                
+                <div style="margin-top: 15px;">
+                    <a href="{{ url_for('static', filename='uploads/' + ngo.government_id_path) }}" 
+                       target="_blank" class="document-link">
+                        <i class="fas fa-file-pdf"></i> View Government ID
+                    </a>
+                </div>
+                
+                <div style="margin-top: 15px;">
+                    <form method="POST" action="{{ url_for('admin_approve_ngo', ngo_id=ngo.id) }}" style="display: inline;">
+                        <button type="submit" class="btn btn-approve" onclick="return confirm('Approve this NGO?');">
+                            <i class="fas fa-check"></i> Approve
+                        </button>
+                    </form>
+                    
+                    <button class="btn btn-reject" onclick="toggleRejectionForm('{{ ngo.id }}')">
+                        <i class="fas fa-times"></i> Reject
+                    </button>
+                    
+                    <div id="rejection-form-{{ ngo.id }}" class="rejection-form">
+                        <form method="POST" action="{{ url_for('admin_reject_ngo', ngo_id=ngo.id) }}">
+                            <textarea name="reason" class="rejection-input" placeholder="Enter rejection reason (optional)"></textarea>
+                            <button type="submit" class="rejection-btn">Confirm Rejection</button>
+                            <button type="button" class="rejection-btn" style="background: #9e9e9e;" onclick="hideRejectionForm('{{ ngo.id }}')">Cancel</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-check-circle"></i>
+                <h3>No Pending NGOs</h3>
+                <p>There are no pending NGO registrations to review.</p>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div style="text-align: center;">
+            <a href="{{ url_for('admin_dashboard') }}" class="btn" style="background: #607d8b; text-decoration: none; margin-right: 10px;">
+                <i class="fas fa-tachometer-alt"></i> Admin Dashboard
+            </a>
+            <a href="{{ url_for('logout') }}" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+
+    <script>
+        function toggleRejectionForm(ngoId) {
+            const form = document.getElementById('rejection-form-' + ngoId);
+            if (form && form.style.display === 'block') {
+                form.style.display = 'none';
+            } else {
+                // Hide all other rejection forms first
+                const allForms = document.querySelectorAll('.rejection-form');
+                allForms.forEach(f => f.style.display = 'none');
+                
+                // Show this form
+                if (form) form.style.display = 'block';
+            }
+        }
+        
+        function hideRejectionForm(ngoId) {
+            const form = document.getElementById('rejection-form-' + ngoId);
+            if (form) form.style.display = 'none';
+        }
+        
+
+    </script>
+</body>
+</html>

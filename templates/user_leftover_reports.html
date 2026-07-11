@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block title %}My Leftover Food Reports | WasteNoFood{% endblock %}
+
+{% block extra_css %}
+<style>
+    .reports-container {
+        max-width: 1000px;
+        margin: 50px auto;
+        padding: 20px;
+        font-family: 'Poppins', sans-serif;
+    }
+    .welcome-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #eee;
+    }
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+    .stat-card {
+        background: #fff;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        text-align: center;
+        border-top: 4px solid #FF9800;
+    }
+    .stat-card h3 { color: #666; font-size: 0.9rem; margin-bottom: 10px; }
+    .stat-card p { font-size: 1.8rem; font-weight: bold; color: #FF9800; }
+    
+    .recent-activity {
+        background: #fff;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    th, td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+    }
+    th { color: #666; font-weight: 600; }
+    .status-reported { color: #2196F3; font-weight: bold; }
+    .status-ngo-assigned { color: #FF9800; font-weight: bold; }
+    .status-picked-up { color: #9C27B0; font-weight: bold; }
+    .status-completed { color: #4CAF50; font-weight: bold; }
+    
+    .action-buttons {
+        margin-top: 30px;
+        display: flex;
+        gap: 15px;
+    }
+    .btn {
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: 0.3s;
+    }
+    .btn-primary { background: #2e7d32; color: white; }
+    .btn-secondary { background: #607d8b; color: white; }
+    .btn-warning { background: #FF9800; color: white; }
+    .btn:hover { opacity: 0.9; }
+    
+    .btn-small {
+        padding: 5px 10px;
+        font-size: 0.8rem;
+        border-radius: 4px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="reports-container">
+    <div class="welcome-header">
+        <h1>My Leftover Food Reports</h1>
+        <div>
+            <button onclick="location.reload()" class="btn btn-secondary" style="margin-right: 10px;">
+                <i class="fas fa-sync"></i> Refresh
+            </button>
+            <a href="{{ url_for('user_dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>Total Reports</h3>
+            <p>{{ stats.total_reports or 0 }}</p>
+        </div>
+        <div class="stat-card">
+            <h3>Pending Reports</h3>
+            <p>{{ stats.pending_reports or 0 }}</p>
+        </div>
+        <div class="stat-card">
+            <h3>Completed Reports</h3>
+            <p>{{ stats.completed_reports or 0 }}</p>
+        </div>
+    </div>
+
+    <div class="recent-activity">
+        <h2>My Leftover Food Reports</h2>
+        <p>Track your reported leftover food and their current status.</p>
+        {% if reports %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Report ID</th>
+                    <th>Event Type</th>
+                    <th>Food Type</th>
+                    <th>Food Left</th>
+                    <th>Assigned NGO</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for report in reports %}
+                <tr>
+                    <td>{{ report.id }}</td>
+                    <td>{{ report.event_type }}</td>
+                    <td>{{ report.food_type }}</td>
+                    <td>{{ report.food_left_kg }} kg / {{ report.food_left_plates }} plates</td>
+                    <td>{{ report.ngo_name or 'Not Assigned' }}</td>
+                    <td>
+                        <span class="status-{{ report.status.lower().replace('_', '-') }}">
+                            {{ report.status.replace('_', ' ').title() }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if report.created_at %}
+                            {% if report.created_at.__class__.__name__ == 'timedelta' %}
+                                {{ report.created_at }}
+                            {% else %}
+                                {{ report.created_at.strftime('%Y-%m-%d %H:%M') }}
+                            {% endif %}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ url_for('track_leftover_report', report_id=report.id) }}" class="btn btn-small btn-warning">
+                            <i class="fas fa-eye"></i> Track
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p style="margin-top: 20px; color: #888;">You haven't reported any leftover food yet.</p>
+        <a href="{{ url_for('report_leftover_food') }}" class="btn btn-primary" style="margin-top: 15px; display: inline-block;">
+            <i class="fas fa-plus"></i> Report Leftover Food
+        </a>
+        {% endif %}
+    </div>
+
+    <div class="action-buttons">
+        <a href="{{ url_for('report_leftover_food') }}" class="btn btn-primary">
+            <i class="fas fa-utensils"></i> Report New Leftover Food
+        </a>
+        <a href="{{ url_for('user_dashboard') }}" class="btn btn-secondary">
+            <i class="fas fa-tachometer-alt"></i> Back to Dashboard
+        </a>
+        <a href="{{ url_for('index') }}" class="btn btn-secondary">
+            <i class="fas fa-home"></i> Back to Home
+        </a>
+    </div>
+</div>
+
+<script>
+// Auto-refresh every 30 seconds to check for status updates
+setTimeout(function() {
+    // Only auto-refresh if there are pending reports
+    const pendingReports = document.querySelectorAll('.status-ngo-assigned, .status-reported, .status-picked-up').length;
+    if (pendingReports > 0) {
+        location.reload();
+    }
+}, 30000);
+</script>
+{% endblock %}

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NGO Partners - WasteNoFood</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='ngo.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+ body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #1565c0;
+        }
+        .ngo-card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
+            border-left: 4px solid #42a5f5;
+        }
+        .ngo-card h2 {
+            margin-top: 0;
+            color: #1976d2;
+        }
+        .ngo-card p {
+            margin: 6px 0;
+            color: #424242;
+        }
+        .btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 15px;
+            background: #42a5f5;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .btn:hover {
+            background: #1e88e5;
+        }
+        .back-home-btn {
+            display: block;
+            width: 200px;
+            margin: 30px auto;
+            text-align: center;
+            padding: 12px 20px;
+            background: #1976d2;
+            color: white;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .back-home-btn:hover {
+            background: #1565c0;
+        }
+        .donate-btn {
+            background: #2e7d32;
+            margin-right: 10px;
+        }
+        .donate-btn:hover {
+            background: #1b5e20;
+        }
+</style>
+
+
+</head>
+
+<body>
+
+    <h1>List of NGOs</h1>
+
+    <!-- NGO 1 -->
+    <div class="ngo-card">
+        <h2>Food For All</h2>
+        <p><strong>Description:</strong> We distribute surplus food to poor families and homeless communities.</p>
+        <p><strong>Mission:</strong> Reduce hunger and prevent food waste.</p>
+        <p><strong>Process:</strong><br>Collect surplus food → Sort and package → Distribute safely → Track impact</p>
+        <p><strong>Activities:</strong> Food drives, community kitchens, school meal programs.</p>
+        <p><strong>Impact:</strong> Helped 10,000+ people across 12 cities.</p>
+        <p><strong>Contact:</strong> contact@ffa.org | 9999999999</p>
+        <a href="{{ url_for('donate_to_ngo', ngo_id=1) }}" class="btn donate-btn">
+            <i class="fas fa-donate"></i> Donate Food
+        </a>
+    </div>
+
+    <!-- NGO 2 -->
+    <div class="ngo-card">
+        <h2>Hunger Relief India</h2>
+        <p><strong>Description:</strong> A nationwide movement ensuring leftover food reaches the needy.</p>
+        <p><strong>Mission:</strong> Achieve zero hunger in India by 2030.</p>
+        <p><strong>Process:</strong><br>Collect food → Transport → Serve meals → Verify beneficiaries</p>
+        <p><strong>Activities:</strong> Meal distribution, food rescue teams, awareness programs.</p>
+        <p><strong>Impact:</strong> Fed over 20,000 struggling families.</p>
+        <p><strong>Contact:</strong> info@hri.in | 8888888888</p>
+        <a href="{{ url_for('donate_to_ngo', ngo_id=2) }}" class="btn donate-btn">
+            <i class="fas fa-donate"></i> Donate Food
+        </a>
+    </div>
+
+    <!-- NGO 3 -->
+    <div class="ngo-card">
+        <h2>Robin Food Mission</h2>
+        <p><strong>Description:</strong> We rescue food from events, restaurants, and markets.</p>
+        <p><strong>Mission:</strong> Ensure no food goes to waste.</p>
+        <p><strong>Process:</strong><br>Collect event surplus food → Quality check → Distribute to shelters</p>
+        <p><strong>Activities:</strong> Food rescue, night shelter support, volunteer training.</p>
+        <p><strong>Impact:</strong> Saved 50,000 kg of food from waste.</p>
+        <p><strong>Contact:</strong> support@rfmission.org | 7777777777</p>
+        <a href="{{ url_for('donate_to_ngo', ngo_id=3) }}" class="btn donate-btn">
+            <i class="fas fa-donate"></i> Donate Food
+        </a>
+    </div>
+
+    <!-- NGO 4 -->
+    <div class="ngo-card">
+        <h2>Feeding Smiles Foundation</h2>
+        <p><strong>Description:</strong> A youth-led initiative providing meals to underprivileged kids.</p>
+        <p><strong>Mission:</strong> Nourish children with healthy meals.</p>
+        <p><strong>Process:</strong><br>Prepare meals → Deliver to slum areas → Monitor health</p>
+        <p><strong>Activities:</strong> Child nutrition programs, school meal support.</p>
+        <p><strong>Impact:</strong> Served food to 15,000 children.</p>
+        <p><strong>Contact:</strong> hello@feedingsmiles.org | 9090909090</p>
+        <a href="{{ url_for('donate_to_ngo', ngo_id=4) }}" class="btn donate-btn">
+            <i class="fas fa-donate"></i> Donate Food
+        </a>
+    </div>
+
+    <!-- NGO 5 -->
+    <div class="ngo-card">
+        <h2>Green Earth Food Rescue</h2>
+        <p><strong>Description:</strong> We work with supermarkets to save unsold but edible food.</p>
+        <p><strong>Mission:</strong> Protect the environment by reducing food waste.</p>
+        <p><strong>Process:</strong><br>Collect unsold food → Sort & store → Distribute to villages</p>
+        <p><strong>Activities:</strong> Village donations, environmental awareness.</p>
+        <p><strong>Impact:</strong> Prevented 30,000 kg of food waste.</p>
+        <p><strong>Contact:</strong> greenearth@rescue.org | 7878787878</p>
+        <a href="{{ url_for('donate_to_ngo', ngo_id=5) }}" class="btn donate-btn">
+            <i class="fas fa-donate"></i> Donate Food
+        </a>
+    </div>
+
+    <!-- NGO 6 -->
+    <div class="ngo-card">
+        <h2>Humanity First Kitchen</h2>
+        <p><strong>Description:</strong> Runs free kitchens for anyone who needs a meal.</p>
+        <p><strong>Mission:</strong> Serve hot meals daily to the poor.</p>
+        <p><strong>Process:</strong><br>Cook meals → Pack safely → Deliver to settlements</p>
+        <p><strong>Activities:</strong> Daily meal service, medical camps.</p>
+        <p><strong>Impact:</strong> Serves 1,500+ meals every day.</p>
+        <p><strong>Contact:</strong> help@humanityfirstkitchen.org | 8989898989</p>
+        <a href="{{ url_for('donate_to_ngo', ngo_id=6) }}" class="btn donate-btn">
+            <i class="fas fa-donate"></i> Donate Food
+        </a>
+    </div>
+
+    <a href="{{ url_for('index') }}" class="back-home-btn">
+        <i class="fas fa-home"></i> Back to Home
+    </a>
+
+</body>
+</html>

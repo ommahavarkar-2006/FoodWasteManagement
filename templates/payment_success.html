@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Payment Successful | WasteNoFood{% endblock %}
+
+{% block extra_css %}
+<style>
+    .success-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 70vh;
+        padding: 20px;
+    }
+    .success-card {
+        background: white;
+        padding: 50px;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        text-align: center;
+        max-width: 500px;
+        width: 100%;
+        animation: slideUp 0.5s ease-out;
+    }
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .success-icon {
+        font-size: 5rem;
+        color: #2e7d32;
+        margin-bottom: 20px;
+    }
+    .success-card h1 {
+        color: #333;
+        margin-bottom: 15px;
+        font-size: 2rem;
+    }
+    .success-card p {
+        color: #666;
+        margin-bottom: 30px;
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+    .btn-dashboard {
+        display: inline-block;
+        background: #1a4731;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+    .btn-dashboard:hover {
+        background: #123323;
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(26, 71, 49, 0.3);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="success-container">
+    <div class="success-card">
+        <div class="success-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <h1>Payment Successful!</h1>
+        <p>Thank you for your generous contribution. Your support helps us fight food waste and hunger effectively. A confirmation has been sent to your email.</p>
+        <div class="action-buttons">
+            <a href="{{ url_for('user_dashboard') }}" class="btn-dashboard">Go to Dashboard</a>
+            <a href="{{ url_for('index') }}" style="display: block; margin-top: 15px; color: #666; text-decoration: none; font-size: 0.9rem;">Back to Home</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Composting Guide — WasteNoFood</title>
+
+  <!-- Link the CSS file -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='compost.css') }}">
+
+  <!-- Font Awesome (optional for icons) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+  <main class="container">
+    <article class="compost-card">
+      <header>
+        <h1>🌱 Composting Guide — Simple & Effective Tips</h1>
+        <p class="lead">Turn kitchen scraps into nutrient-rich soil — reduce waste, help your garden, and fight climate change.</p>
+      </header>
+
+      <section>
+        <h2>1. What Is Composting?</h2>
+        <p>Composting is a natural process where organic waste (food scraps, leaves) breaks down into nutrient-rich soil that improves plant growth and keeps waste out of landfills.</p>
+      </section>
+
+      <section>
+        <h2>🍃 2. What You Can Compost (Green Waste)</h2>
+        <ul class="bulleted">
+          <li>Fruit peels</li>
+          <li>Vegetable scraps</li>
+          <li>Coffee grounds & tea bags</li>
+          <li>Bread, rice, and grains (small amounts)</li>
+          <li>Fresh grass clippings</li>
+          <li>Expired veggies or fruits</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>🍂 3. What You Should <em>Not</em> Compost</h2>
+        <ul class="bulleted">
+          <li>Meat, fish, eggs</li>
+          <li>Dairy products</li>
+          <li>Oily or greasy food</li>
+          <li>Plastics or metal</li>
+          <li>Diseased plants</li>
+          <li>Pet / animal waste</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>⚖️ 4. Composting Formula: 50% Green + 50% Brown</h2>
+        <p><strong>Greens (Nitrogen):</strong> food scraps, coffee grounds, grass clippings.<br>
+           <strong>Browns (Carbon):</strong> dry leaves, shredded paper/cardboard, sawdust.</p>
+      </section>
+
+      <section>
+        <h2>🤲 5. How to Start Composting at Home (Step-by-Step)</h2>
+        <ol class="steps">
+          <li><strong>Choose a bin:</strong> bucket, compost drum, or simple pile.</li>
+          <li><strong>Layer browns first:</strong> dry leaves or cardboard.</li>
+          <li><strong>Add food scraps:</strong> daily vegetable/fruit peels in small pieces.</li>
+          <li><strong>Add soil or old compost:</strong> seeds the process with microbes.</li>
+          <li><strong>Mix weekly:</strong> turn to supply oxygen.</li>
+          <li><strong>Keep moist (not wet):</strong> water lightly if too dry.</li>
+        </ol>
+      </section>
+
+      <section>
+        <h2>⏳ 6. How Long Does Compost Take?</h2>
+        <p>Under good conditions compost can be ready in <strong>2–3 months</strong>. Time varies with temperature, particle size, and how often you turn it.</p>
+      </section>
+
+      <section>
+        <h2>🪴 7. Benefits of Composting</h2>
+        <ul class="bulleted">
+          <li>Reduces household waste</li>
+          <li>Creates natural fertiliser for plants</li>
+          <li>Improves soil health and water retention</li>
+          <li>Reduces methane emissions from landfills</li>
+          <li>Saves money on chemical fertilisers</li>
+        </ul>
+      </section>
+
+     <footer class="card-footer">
+    <a class="back-btn" href="{{ url_for('index') }}">
+        <i class="fas fa-arrow-left"></i> Back to Home
+    </a>
+
+    <a class="more-btn" href="{{ url_for('payment') }}">
+       Payment <i class="fas fa-leaf"></i>
+    </a>
+</footer>
+    </article>
+  </main>
+
+</body>
+</html>

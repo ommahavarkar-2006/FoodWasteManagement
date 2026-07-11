@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Donation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style1.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Flash Message Styles */
+        .flash-container {
+            max-width: 900px;
+            width: 90%;
+            margin: 20px auto 0;
+        }
+        .flash-message {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+        .flash-success {
+            background-color: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+        }
+        .flash-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
+
+        /* Success Overlay Styles */
+        .success-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .success-card {
+            background: white;
+            padding: 50px;
+            border-radius: 25px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .success-card h2 {
+            color: #2e7d32;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .success-card p {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        .btn-home-success {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #ff7e5f;
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .btn-home-success:hover {
+            transform: scale(1.05);
+            background: #ff6b47;
+        }
+
+        /* Reset some default styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(to right, #ffecd2, #fcb69f);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            width: 100%;
+            padding: 20px 0;
+            background-color: rgba(255, 255, 255, 0.2);
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        header h1 {
+            color: #fff;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .container {
+            max-width: 900px;
+            width: 90%;
+            margin: 50px auto;
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .container h2 {
+            text-align: center;
+            color: #ff7e5f;
+            margin-bottom: 30px;
+        }
+
+        .donation-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .card {
+            background-color: #fff5f0;
+            border-radius: 15px;
+            padding: 20px;
+            width: 250px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 25px rgba(0,0,0,0.2);
+        }
+
+        .card img {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .card h3 {
+            color: #ff7e5f;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: #555;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+        }
+
+        .card button {
+            padding: 10px 20px;
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            border: none;
+            border-radius: 30px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .form-modal h2 {
+            margin-bottom: 25px;
+            color: #ff7e5f;
+            font-size: 1.5rem;
+        }
+
+        .form-modal input, .form-modal textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .form-modal input:focus, .form-modal textarea:focus {
+            border-color: #ff7e5f;
+        }
+
+        .form-modal button {
+            width: 100%;
+            padding: 15px;
+            background: #ff7e5f;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+
+        .card button:hover {
+            background: linear-gradient(to right, #feb47b, #ff7e5f);
+            transform: scale(1.05);
+        }
+.card-footer{
+  display:flex;
+  gap:12px;
+  justify-content:flex-end;
+
+  margin-top: 20px;
+}
+
+.back-btn, .more-btn{
+  display:inline-flex;
+  gap:8px;
+  align-items:center;
+  padding:10px 14px;
+  border-radius: 10px;
+  text-decoration:none;
+  font-weight:600;
+  color: white;
+  background: var(--accent);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+        footer {
+            width: 100%;
+            padding: 15px 0;
+            text-align: center;
+            margin-top: auto;
+            color: #fff;
+            background-color: rgba(0,0,0,0.2);
+        }
+
+        @media(max-width: 600px){
+            .donation-section {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Success Message Overlay -->
+    {% if request.args.get('success') %}
+    <div class="success-overlay" style="display: flex;">
+        <div class="success-card">
+            <h2>🎉 Donation Submitted!</h2>
+            <p>Thank you for helping reduce food waste. Your donation is now being tracked!</p>
+            <a href="{{ url_for('user_donation_tracking') }}" class="btn-home-success">View Your Donations</a>
+            <a href="{{ url_for('index') }}" class="btn-home-success" style="background: #607d8b; margin-left: 10px;">Go Home</a>
+        </div>
+    </div>
+    {% endif %}
+
+    <header>
+        <h1>Food Donation Platform</h1>
+    </header>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-container">
+                    {% for category, message in messages %}
+                        <div class="flash-message flash-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        <h2>Donate and Make a Difference</h2>
+        <div class="donation-section">
+            <div class="card">
+                <img src="https://images.unsplash.com/photo-1604908177522-0c94cb2b1f0f?auto=format&fit=crop&w=400&q=80" alt="Fruits and Vegetables">
+                <h3>Fruits & Vegetables</h3>
+                <p>Donate fresh fruits and vegetables to local NGOs.</p>
+                <button onclick="openDonationModal('Fruits & Vegetables')">Donate Now</button>
+            </div>
+            <div class="card">
+                <img src="https://images.unsplash.com/photo-1568158877235-49f64f06ff8e?auto=format&fit=crop&w=400&q=80" alt="Cooked Meals">
+                <h3>Cooked Meals</h3>
+                <p>Help feed the hungry by providing cooked meals.</p>
+                <button onclick="openDonationModal('Cooked Meals')">Donate Now</button>
+            </div>
+            <div class="card">
+                <img src="https://images.unsplash.com/photo-1600185366412-b062d3202ed8?auto=format&fit=crop&w=400&q=80" alt="Dry Food">
+                <h3>Dry Food</h3>
+                <p>Packaged and non-perishable food donations are welcome.</p>
+                <button onclick="openDonationModal('Dry Food')">Donate Now</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Donation Modal -->
+    <div id="donationModal" class="modal">
+        <div class="modal-content form-modal">
+            <span class="close-btn" onclick="closeDonationModal()">&times;</span>
+            <h2 id="modalTitle">Donate</h2>
+            
+            <form action="{{ url_for('food_donation') }}" method="post" enctype="multipart/form-data" class="form">
+                <input type="hidden" name="food_type" id="foodTypeInput">
+                <input type="text" name="food_name" placeholder="Food Name" required>
+                <input type="text" name="quantity" placeholder="Quantity (plates/kg)" required>
+                <input type="text" name="expiry" placeholder="Expiry Time" required>
+                <textarea name="address" placeholder="Pickup Address" required></textarea>
+                <input type="text" name="phone" placeholder="Phone Number" required>
+                
+                <!-- NGO Selection Dropdown -->
+                <select name="ngo_id" id="ngoSelect" required>
+                    <option value="">-- Select NGO to Donate To --</option>
+                    {% for ngo in ngos %}
+                    <option value="{{ ngo.id }}" {% if ngo.id == selected_ngo_id %}selected{% endif %}>{{ ngo.name }}</option>
+                    {% endfor %}
+                </select>
+                
+                <input type="file" name="image" required>
+                <button type="submit">Submit Donation</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openDonationModal(foodType) {
+            document.getElementById('modalTitle').innerText = 'Donate ' + foodType;
+            document.getElementById('foodTypeInput').value = foodType;
+            document.getElementById('donationModal').style.display = 'flex';
+            
+            // If there's a pre-selected NGO, show it
+            const selectedNgoName = "{{ selected_ngo_name }}";
+            if (selectedNgoName) {
+                const ngoSelect = document.getElementById('ngoSelect');
+                if (ngoSelect && ngoSelect.selectedOptions.length > 0) {
+                    const selectedOption = ngoSelect.selectedOptions[0];
+                    document.getElementById('modalTitle').innerText = 'Donate ' + foodType + ' to ' + selectedNgoName;
+                }
+            }
+        }
+
+        function closeDonationModal() {
+            document.getElementById('donationModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('donationModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        
+        // Show pre-selected NGO info on page load
+        window.onload = function() {
+            const selectedNgoName = "{{ selected_ngo_name }}";
+            if (selectedNgoName) {
+                const ngoSelect = document.getElementById('ngoSelect');
+                if (ngoSelect) {
+                    // Find and select the option
+                    for (let i = 0; i < ngoSelect.options.length; i++) {
+                        if (ngoSelect.options[i].text.includes(selectedNgoName)) {
+                            ngoSelect.selectedIndex = i;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+<footer class="card-footer">
+    <a class="back-btn" href="{{ url_for('index') }}">
+        <i class="fas fa-arrow-left"></i> Back to Home
+    </a>
+
+    <a class="more-btn" href="{{ url_for('eco') }}">
+        ECO <i class="fas fa-leaf"></i>
+    </a>
+</footer>
+
+    <footer>
+        &copy; 2025 Food Donation Platform. All rights reserved.
+    </footer>
+</body>
+</html>

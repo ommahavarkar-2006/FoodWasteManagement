@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Food Donation | WasteNoFood</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style1.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            min-height: 100vh;
+        }
+        
+        .donation-container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .donation-container h2 {
+            text-align: center;
+            color: #1565c0;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+        
+        .input-box {
+            margin-bottom: 20px;
+        }
+        
+        .input-box label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .input-box select,
+        .input-box input,
+        .input-box textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+        
+        .input-box select:focus,
+        .input-box input:focus,
+        .input-box textarea:focus {
+            outline: none;
+            border-color: #2196f3;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #2e7d32, #1b5e20);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 125, 50, 0.4);
+        }
+        
+        .required {
+            color: #e74c3c;
+        }
+        
+        .redirect {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+        
+        .redirect a {
+            color: #2196f3;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .redirect a:hover {
+            text-decoration: underline;
+        }
+        
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+        
+        .flash {
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        
+        .flash-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .flash-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .flash-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .ngo-info {
+            background: #e3f2fd;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 5px;
+            font-size: 0.9em;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="donation-container">
+        <h2><i class="fas fa-donate"></i> Track Food Donation</h2>
+
+        {%- with messages = get_flashed_messages(with_categories=true) %}
+            {%- if messages %}
+                <div class="flash-messages">
+                    {%- for category, message in messages %}
+                        <div class="flash {{ category }}">{{ message }}</div>
+                    {%- endfor %}
+                </div>
+            {%- endif %}
+        {%- endwith %}
+
+        <form action="/donate-food-track" method="POST">
+            <div class="input-box">
+                <label for="ngo_id">Select NGO <span class="required">*</span></label>
+                <select id="ngo_id" name="ngo_id" required>
+                    <option value="">-- Select an NGO --</option>
+                    {% if selected_ngo %}
+                        <option value="{{ selected_ngo.id }}" selected>{{ selected_ngo.name }} - {{ selected_ngo.contact_email }}</option>
+                    {% endif %}
+                    {% for ngo in ngos %}
+                        {% if selected_ngo and ngo.id != selected_ngo.id %}
+                            <option value="{{ ngo.id }}">{{ ngo.name }} - {{ ngo.contact_email }}</option>
+                        {% elif not selected_ngo %}
+                            <option value="{{ ngo.id }}">{{ ngo.name }} - {{ ngo.contact_email }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="input-box">
+                <label for="food_quantity">Food Quantity <span class="required">*</span></label>
+                <input type="text" id="food_quantity" name="food_quantity" placeholder="e.g., 5 plates, 2 kg, 10 packets" required>
+            </div>
+
+            <div class="input-box">
+                <label for="location">Collection Location <span class="required">*</span></label>
+                <textarea id="location" name="location" placeholder="Enter full address for food collection" rows="3" required></textarea>
+            </div>
+
+            <button type="submit" class="btn">
+                <i class="fas fa-paper-plane"></i> Track Donation
+            </button>
+        </form>
+
+        <p class="redirect">
+            <a href="{{ url_for('donor_dashboard') }}"><i class="fas fa-tachometer-alt"></i> Back to Donor Dashboard</a>
+        </p>
+        
+        <p class="redirect">
+            <a href="{{ url_for('index') }}"><i class="fas fa-home"></i> Back to Home</a>
+        </p>
+    </div>
+</body>
+</html>

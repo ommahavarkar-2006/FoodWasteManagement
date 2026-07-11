@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donate to NGO - WasteNoFood</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='payment.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #2e7d32;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .ngo-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: #fafafa;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .ngo-card:hover {
+            border-color: #1976d2;
+            background: #e3f2fd;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .ngo-card.selected {
+            border-color: #4caf50;
+            background: #e8f5e9;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+        }
+        
+        .ngo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .ngo-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1976d2;
+        }
+        
+        .ngo-address {
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        
+        .ngo-description {
+            color: #555;
+            font-style: italic;
+            margin-bottom: 15px;
+        }
+        
+        .donation-form {
+            background: #f5f5f5;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 30px;
+            display: none;
+        }
+        
+        .donation-form.active {
+            display: block;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .input-group input, 
+        .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        .input-group input:focus, 
+        .input-group select:focus {
+            outline: none;
+            border-color: #1976d2;
+        }
+        
+        .btn-primary {
+            background: #2e7d32;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.3s;
+        }
+        
+        .btn-primary:hover {
+            background: #1b5e20;
+        }
+        
+        .btn-secondary {
+            background: #607d8b;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        
+        .btn-secondary:hover {
+            background: #455a64;
+        }
+        
+        .selected-ngo-info {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .selected-ngo-info h3 {
+            margin-top: 0;
+            color: #2e7d32;
+        }
+        
+        .amount-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .amount-option {
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .amount-option:hover {
+            border-color: #1976d2;
+            background: #e3f2fd;
+        }
+        
+        .amount-option.selected {
+            border-color: #4caf50;
+            background: #e8f5e9;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-hand-holding-heart"></i> Donate to NGO</h1>
+            <p>Choose an NGO and make a difference in someone's life</p>
+        </div>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <form method="POST" id="donationForm">
+            <input type="hidden" name="ngo_id" id="selected_ngo_id" required>
+            <input type="hidden" name="ngo_name" id="selected_ngo_name" required>
+            
+            <h2><i class="fas fa-building"></i> Select an NGO</h2>
+            <p style="color: #666; margin-bottom: 20px;">Choose which NGO you'd like to support with your donation</p>
+            
+            {% if ngos %}
+                {% for ngo in ngos %}
+                <div class="ngo-card" onclick="selectNGO({{ ngo.id }}, '{{ ngo.name }}', this)">
+                    <div class="ngo-header">
+                        <div class="ngo-name">
+                            <i class="fas fa-building"></i> {{ ngo.name }}
+                        </div>
+                    </div>
+                    <div class="ngo-address">
+                        <i class="fas fa-map-marker-alt"></i> {{ ngo.address }}
+                    </div>
+                    <div class="ngo-description">
+                        <i class="fas fa-info-circle"></i> {{ ngo.description or 'Helping communities in need' }}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i> No verified NGOs available at the moment. Please try again later.
+                </div>
+            {% endif %}
+            
+            <div class="donation-form" id="donationFormSection">
+                <div class="selected-ngo-info" id="selectedNGOInfo" style="display: none;">
+                    <h3><i class="fas fa-check-circle"></i> Selected NGO</h3>
+                    <p id="selectedNGODetails"></p>
+                </div>
+                
+                <div class="input-group">
+                    <label for="amount">Donation Amount (₹) <span style="color: red;">*</span></label>
+                    <div class="amount-options">
+                        <div class="amount-option" onclick="selectAmount(100, this)">₹100</div>
+                        <div class="amount-option" onclick="selectAmount(500, this)">₹500</div>
+                        <div class="amount-option" onclick="selectAmount(1000, this)">₹1000</div>
+                        <div class="amount-option" onclick="selectAmount(2000, this)">₹2000</div>
+                        <div class="amount-option" onclick="selectAmount(5000, this)">₹5000</div>
+                        <div class="amount-option" onclick="selectAmount(0, this)">Other</div>
+                    </div>
+                    <input type="number" id="amount" name="amount" min="10" placeholder="Enter amount (minimum ₹10)" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="payment_method">Payment Method <span style="color: red;">*</span></label>
+                    <select id="payment_method" name="payment_method" required>
+                        <option value="">Select Payment Method</option>
+                        <option value="card">Credit/Debit Card</option>
+                        <option value="upi">UPI</option>
+                        <option value="netbanking">Net Banking</option>
+                        <option value="cod">Cash on Delivery</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label for="message">Message (Optional)</label>
+                    <textarea id="message" name="message" rows="3" placeholder="Add a personal message..." style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px;"></textarea>
+                </div>
+                
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-donate"></i> Proceed to Payment
+                </button>
+            </div>
+        </form>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="{{ url_for('user_dashboard') }}" class="btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+    
+    <script>
+        let selectedNGOId = null;
+        let selectedNGOName = null;
+        
+        function selectNGO(ngoId, ngoName, element) {
+            // Remove selected class from all cards
+            document.querySelectorAll('.ngo-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked card
+            element.classList.add('selected');
+            
+            // Store selected NGO info
+            selectedNGOId = ngoId;
+            selectedNGOName = ngoName;
+            
+            // Update hidden fields
+            document.getElementById('selected_ngo_id').value = ngoId;
+            document.getElementById('selected_ngo_name').value = ngoName;
+            
+            // Show selected NGO info
+            document.getElementById('selectedNGODetails').textContent = ngoName;
+            document.getElementById('selectedNGOInfo').style.display = 'block';
+            
+            // Show donation form
+            document.getElementById('donationFormSection').classList.add('active');
+            
+            // Scroll to form
+            document.getElementById('donationFormSection').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function selectAmount(amount, element) {
+            // Remove selected class from all options
+            document.querySelectorAll('.amount-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked option
+            element.classList.add('selected');
+            
+            // Set amount in input field
+            if (amount > 0) {
+                document.getElementById('amount').value = amount;
+            } else {
+                document.getElementById('amount').value = '';
+                document.getElementById('amount').focus();
+            }
+        }
+        
+        // Form validation
+        document.getElementById('donationForm').addEventListener('submit', function(e) {
+            if (!selectedNGOId) {
+                e.preventDefault();
+                alert('Please select an NGO first!');
+                return;
+            }
+            
+            const amount = parseFloat(document.getElementById('amount').value);
+            if (isNaN(amount) || amount < 10) {
+                e.preventDefault();
+                alert('Please enter a valid amount (minimum ₹10)!');
+                return;
+            }
+            
+            const paymentMethod = document.getElementById('payment_method').value;
+            if (!paymentMethod) {
+                e.preventDefault();
+                alert('Please select a payment method!');
+                return;
+            }
+        });
+    </script>
+</body>
+</html>

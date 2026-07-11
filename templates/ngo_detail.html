@@ -1,0 +1,156 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ ngo.name }} - WasteNoFood</title>
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style1.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        .ngo-detail {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .ngo-hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 50px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .ngo-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .ngo-section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        .process-steps {
+            list-style: none;
+            padding: 0;
+        }
+        .process-steps li {
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-left: 4px solid #10b981;
+            border-radius: 5px;
+        }
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .contact-item i {
+            color: #667eea;
+            font-size: 1.5rem;
+        }
+        .cta-section {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border-radius: 15px;
+        }
+        .btn {
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ngo-detail">
+
+        <!-- NGO Hero Section -->
+        <div class="ngo-hero">
+            <h1>{{ ngo.name }}</h1>
+            <p>{{ ngo.mission }}</p>
+        </div>
+
+        <!-- About Section -->
+        <div class="ngo-section">
+            <h2><i class="fas fa-info-circle"></i> About Us</h2>
+            <p>{{ ngo.description }}</p>
+        </div>
+
+        <!-- Process Section -->
+        <div class="ngo-section">
+            <h2><i class="fas fa-clipboard-list"></i> How We Work</h2>
+            <ul class="process-steps">
+                {% for step in ngo.process.split('\n') if step.strip() %}
+                <li>{{ step.strip() }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Activities Section -->
+        <div class="ngo-section">
+            <h2><i class="fas fa-tasks"></i> Our Activities</h2>
+            <p>{{ ngo.activities }}</p>
+        </div>
+
+        <!-- Impact Section -->
+        <div class="ngo-section">
+            <h2><i class="fas fa-chart-line"></i> Our Impact</h2>
+            <p>{{ ngo.impact }}</p>
+        </div>
+
+        <!-- Contact Section -->
+        <div class="ngo-section">
+            <h2><i class="fas fa-phone"></i> Contact Information</h2>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>{{ ngo.contact_email }}</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-phone"></i>
+                    <span>{{ ngo.contact_phone }}</span>
+                </div>
+                {% if ngo.website %}
+                <div class="contact-item">
+                    <i class="fas fa-globe"></i>
+                    <a href="{{ ngo.website }}" target="_blank">Visit Website</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Call to Action Section -->
+        <div class="cta-section">
+            <h2>Support {{ ngo.name }} Today!</h2>
+            <p>Your donation can make a real difference in fighting hunger and food waste.</p>
+
+            <div style="margin-top: 20px; display: flex; gap: 15px; justify-content: center;">
+                <a href="{{ url_for('payment') }}?ngo={{ ngo.name }}&ngo_id={{ ngo.id }}" class="btn" style="background: white; color: #10b981;">
+                    <i class="fas fa-donate"></i> Donate Now
+                </a>
+
+                <a href="{{ url_for('ngos') }}" class="btn" style="background: #6c757d; color: white;">
+                    <i class="fas fa-arrow-left"></i> Back to NGOs
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

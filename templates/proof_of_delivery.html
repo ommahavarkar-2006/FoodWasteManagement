@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proof of Delivery | WasteNoFood</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style1.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .delivery-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .delivery-container h2 {
+            color: #2e7d32;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+        }
+        
+        .section {
+            margin-bottom: 25px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            background-color: #fafafa;
+        }
+        
+        .section h3 {
+            color: #2e7d32;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        
+        .input-box {
+            margin-bottom: 20px;
+        }
+        
+        .input-box label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .input-box select,
+        .input-box input,
+        .input-box textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+        
+        .input-box select:focus,
+        .input-box input:focus,
+        .input-box textarea:focus {
+            outline: none;
+            border-color: #2196f3;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #2e7d32, #1b5e20);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 125, 50, 0.4);
+        }
+        
+        .required {
+            color: #e74c3c;
+        }
+        
+        .donation-info {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .donation-info p {
+            margin: 5px 0;
+            color: #333;
+        }
+        
+        .donation-info strong {
+            color: #2e7d32;
+        }
+        
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #607d8b;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+        }
+        
+        .back-btn:hover {
+            background: #546e7a;
+        }
+        
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+        
+        .flash {
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        
+        .flash-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .flash-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="delivery-container">
+        <h2><i class="fas fa-clipboard-check"></i> Proof of Delivery</h2>
+
+        {%- with messages = get_flashed_messages(with_categories=true) %}
+            {%- if messages %}
+                <div class="flash-messages">
+                    {%- for category, message in messages %}
+                        <div class="flash {{ category }}">{{ message }}</div>
+                    {%- endfor %}
+                </div>
+            {%- endif %}
+        {%- endwith %}
+
+        {% if donations %}
+        <h3>Pending Donations</h3>
+        {% for donation in donations %}
+        <div class="donation-info">
+            <p><strong>Donation ID:</strong> {{ donation.donation_id }}</p>
+            <p><strong>Donor Name:</strong> {{ donation.donor_name }}</p>
+            <p><strong>Food Quantity:</strong> {{ donation.food_quantity }}</p>
+            <p><strong>Location:</strong> {{ donation.location }}</p>
+            <p><strong>Created:</strong> {{ donation.created_at.strftime('%Y-%m-%d %H:%M') if donation.created_at else 'N/A' }}</p>
+        </div>
+        {% endfor %}
+        
+        <form action="{{ url_for('ngo_proof_of_delivery') }}" method="POST" enctype="multipart/form-data">
+            <div class="input-box">
+                <label for="donation_id">Select Donation ID <span class="required">*</span></label>
+                <select id="donation_id" name="donation_id" required>
+                    <option value="">-- Select a donation --</option>
+                    {% for donation in donations %}
+                    <option value="{{ donation.donation_id }}">{{ donation.donation_id }} - {{ donation.food_quantity }} - {{ donation.location[:30] }}{% if donation.location|length > 30 %}...{% endif %}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="input-box">
+                <label for="ngo_representative">NGO Representative Name <span class="required">*</span></label>
+                <input type="text" id="ngo_representative" name="ngo_representative" placeholder="Enter your name" required>
+            </div>
+
+            <div class="input-box">
+                <label for="otp_code">OTP Code (if available)</label>
+                <input type="text" id="otp_code" name="otp_code" placeholder="Enter OTP for verification">
+            </div>
+
+            <div class="input-box">
+                <label for="proof_image">Upload Photo of Food Collected <span class="required">*</span></label>
+                <input type="file" id="proof_image" name="proof_image" accept=".jpg,.jpeg,.png" required>
+                <small style="color: #666; display: block; margin-top: 5px;">Upload a photo showing the food collection</small>
+            </div>
+
+            <button type="submit" class="btn">
+                <i class="fas fa-check-circle"></i> Confirm Collection Successfully
+            </button>
+        </form>
+        {% else %}
+        <div class="section">
+            <h3>No Pending Donations</h3>
+            <p>You don't have any pending donations to confirm. All donations have been marked as completed.</p>
+        </div>
+        {% endif %}
+
+        <a href="{{ url_for('ngo_dashboard') }}" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+</body>
+</html>

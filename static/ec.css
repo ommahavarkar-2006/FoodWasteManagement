@@ -1,0 +1,82 @@
+body{
+background-image: url("https://cdn.pixabay.com/photo/2023/04/07/07/55/leaves-7905823_640.jpg");
+background-size: 2000px 1800px;
+background-repeat: no-repeat;
+}
+.eco-section {
+    width: 80%;
+    margin: 40px auto;
+    padding: 20px;
+    background: grey;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+}
+
+.eco-section h2 {
+    text-align: center;
+    font-size: 32px;
+    color: white;
+    margin-bottom: 25px;
+}
+
+.eco-tip {
+    background: #ffffff;
+    padding: 18px;
+    border-left: 5px solid #28a745;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    transition: 0.3s ease-in-out;
+}
+
+.eco-tip:hover {
+    background: #eafff0;
+    transform: translateY(-3px);
+}
+
+.eco-tip h3 {
+    font-size: 20px;
+    color: #11733a;
+}
+
+.eco-tip p {
+    font-size: 15px;
+    color: #444;
+    margin-top: 6px;
+}
+
+
+
+.card-footer{
+  display:flex;
+  gap:12px;
+  justify-content:flex-end;
+  margin-top: 20px;
+}
+
+.back-btn, .more-btn{
+  display:inline-flex;
+  gap:8px;
+  align-items:center;
+  padding:10px 14px;
+  border-radius: 10px;
+  text-decoration:none;
+  font-weight:600;
+  color: white;
+  background: var(--accent);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.back-btn{ background:#6c757d } /* darker */
+.more-btn{ background: green }
+
+.back-btn:hover, .more-btn:hover{
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(47,158,68,0.14);
+}
+
+/* Responsive */
+@media (max-width:700px){
+  .container{ padding: 12px; }
+  .card-footer{ justify-content: center; flex-direction: column-reverse; }
+  .back-btn, .more-btn{ width:100%; justify-content:center }
+}

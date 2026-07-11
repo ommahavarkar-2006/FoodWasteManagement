@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Leftover Food - WasteNoFood</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='registration.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #2e7d32;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            background: #fafafa;
+        }
+        
+        .form-section h2 {
+            color: #1976d2;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #1976d2;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .input-group input, 
+        .input-group select, 
+        .input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .input-group input:focus, 
+        .input-group select:focus, 
+        .input-group textarea:focus {
+            outline: none;
+            border-color: #1976d2;
+        }
+        
+        .file-upload {
+            border: 2px dashed #1976d2;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+            background: #e3f2fd;
+        }
+        
+        .file-upload i {
+            font-size: 48px;
+            color: #1976d2;
+            margin-bottom: 10px;
+        }
+        
+        .calculation-box {
+            background: #e8f5e9;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #4caf50;
+        }
+        
+        .calculation-result {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2e7d32;
+            text-align: center;
+            margin: 10px 0;
+        }
+        
+        .btn-primary {
+            background: #2e7d32;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.3s;
+        }
+        
+        .btn-primary:hover {
+            background: #1b5e20;
+        }
+        
+        .required {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-utensils"></i> Report Leftover Food</h1>
+            <p>Help us reduce food waste from your events and feed those in need</p>
+        </div>
+        
+        <form method="POST" enctype="multipart/form-data" id="leftoverForm">
+            <!-- Event Details Section -->
+            <div class="form-section">
+                <h2><i class="fas fa-calendar-alt"></i> Event Details</h2>
+                
+                <div class="input-group">
+                    <label for="event_type">Event Type <span class="required">*</span></label>
+                    <select id="event_type" name="event_type" required>
+                        <option value="">Select Event Type</option>
+                        <option value="Wedding">Wedding</option>
+                        <option value="Party">Party</option>
+                        <option value="Hotel">Hotel</option>
+                        <option value="Function">Function</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label for="event_date">Event Date <span class="required">*</span></label>
+                    <input type="date" id="event_date" name="event_date" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="event_time">Event Time <span class="required">*</span></label>
+                    <input type="time" id="event_time" name="event_time" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="location">Location <span class="required">*</span></label>
+                    <textarea id="location" name="location" placeholder="Enter full event address" rows="3" required></textarea>
+                </div>
+            </div>
+            
+            <!-- Food Details Section -->
+            <div class="form-section">
+                <h2><i class="fas fa-clipboard-list"></i> Food Details</h2>
+                
+                <div class="input-group">
+                    <label for="people_invited">People Invited <span class="required">*</span></label>
+                    <input type="number" id="people_invited" name="people_invited" min="1" placeholder="Number of people invited" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="people_ate">People Who Ate <span class="required">*</span></label>
+                    <input type="number" id="people_ate" name="people_ate" min="0" placeholder="Number of people who actually ate" required>
+                </div>
+                
+                <div class="calculation-box">
+                    <h3><i class="fas fa-calculator"></i> Automatic Food Calculation</h3>
+                    <div class="calculation-result" id="calculation_result">
+                        Enter invited and ate numbers to see estimated leftover
+                    </div>
+                    <p style="text-align: center; margin: 10px 0; color: #666;">
+                        <strong>Estimation Logic:</strong> People Invited - People Ate = Estimated Leftover
+                    </p>
+                </div>
+                
+                <div class="input-group">
+                    <label for="food_left_kg">Approx Food Left (kg) <span class="required">*</span></label>
+                    <input type="number" id="food_left_kg" name="food_left_kg" min="0" step="0.1" placeholder="e.g., 25.5 kg" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="food_left_plates">Food Left (Plates) <span class="required">*</span></label>
+                    <input type="number" id="food_left_plates" name="food_left_plates" min="0" placeholder="e.g., 100 plates" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="food_type">Food Type <span class="required">*</span></label>
+                    <select id="food_type" name="food_type" required>
+                        <option value="">Select Food Type</option>
+                        <option value="Veg">Vegetarian</option>
+                        <option value="Non-Veg">Non-Vegetarian</option>
+                        <option value="Both">Both</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Verification Section -->
+            <div class="form-section">
+                <h2><i class="fas fa-camera"></i> Verification Photos</h2>
+                
+                <div class="input-group">
+                    <label for="food_photo">Upload Photo of Food Left <span class="required">*</span></label>
+                    <div class="file-upload">
+                        <i class="fas fa-utensils"></i>
+                        <p>Drag & drop or click to upload</p>
+                        <input type="file" id="food_photo" name="food_photo" accept=".jpg,.jpeg,.png" required style="display: none;">
+                        <button type="button" onclick="document.getElementById('food_photo').click()" class="btn-primary" style="width: auto; padding: 10px 20px;">Choose File</button>
+                        <p id="food_photo_name" style="margin-top: 10px; color: #666;"></p>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="kitchen_photo">Upload Kitchen Photo <span class="required">*</span></label>
+                    <div class="file-upload">
+                        <i class="fas fa-home"></i>
+                        <p>Drag & drop or click to upload</p>
+                        <input type="file" id="kitchen_photo" name="kitchen_photo" accept=".jpg,.jpeg,.png" required style="display: none;">
+                        <button type="button" onclick="document.getElementById('kitchen_photo').click()" class="btn-primary" style="width: auto; padding: 10px 20px;">Choose File</button>
+                        <p id="kitchen_photo_name" style="margin-top: 10px; color: #666;"></p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Organizer Details Section -->
+            <div class="form-section">
+                <h2><i class="fas fa-user"></i> Organizer Details</h2>
+                
+                <div class="input-group">
+                    <label for="organizer_name">Organizer Name <span class="required">*</span></label>
+                    <input type="text" id="organizer_name" name="organizer_name" placeholder="Full name of event organizer" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="contact_number">Contact Number <span class="required">*</span></label>
+                    <input type="tel" id="contact_number" name="contact_number" placeholder="Mobile number" required>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn-primary">
+                <i class="fas fa-paper-plane"></i> Submit Report and Find NGOs
+            </button>
+        </form>
+    </div>
+    
+    <script>
+        // Auto-calculation functionality
+        document.getElementById('people_invited').addEventListener('input', calculateLeftover);
+        document.getElementById('people_ate').addEventListener('input', calculateLeftover);
+        
+        function calculateLeftover() {
+            const invited = parseInt(document.getElementById('people_invited').value) || 0;
+            const ate = parseInt(document.getElementById('people_ate').value) || 0;
+            
+            if (invited > 0 && ate >= 0) {
+                const leftover = invited - ate;
+                const resultDiv = document.getElementById('calculation_result');
+                
+                if (leftover >= 0) {
+                    resultDiv.innerHTML = `
+                        <i class="fas fa-check-circle"></i> 
+                        <span style="color: #4caf50;">${invited} invited - ${ate} ate = ${leftover} estimated leftover</span><br>
+                        <small>Approximately ${Math.max(1, Math.round(leftover / 4))} kg of food</small>
+                    `;
+                    resultDiv.style.color = '#2e7d32';
+                } else {
+                    resultDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Error: People who ate cannot exceed people invited!`;
+                    resultDiv.style.color = '#f44336';
+                }
+            }
+        }
+        
+        // File name display
+        document.getElementById('food_photo').addEventListener('change', function(e) {
+            const fileName = e.target.files[0] ? e.target.files[0].name : 'No file chosen';
+            document.getElementById('food_photo_name').textContent = fileName;
+        });
+        
+        document.getElementById('kitchen_photo').addEventListener('change', function(e) {
+            const fileName = e.target.files[0] ? e.target.files[0].name : 'No file chosen';
+            document.getElementById('kitchen_photo_name').textContent = fileName;
+        });
+        
+        // Set min date to today
+        document.getElementById('event_date').min = new Date().toISOString().split('T')[0];
+        
+        // Form validation
+        document.getElementById('leftoverForm').addEventListener('submit', function(e) {
+            const invited = parseInt(document.getElementById('people_invited').value);
+            const ate = parseInt(document.getElementById('people_ate').value);
+            
+            if (ate > invited) {
+                e.preventDefault();
+                alert('Error: Number of people who ate cannot exceed number of people invited!');
+                return;
+            }
+        });
+    </script>
+</body>
+</html>

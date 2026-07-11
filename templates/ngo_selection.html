@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select NGO - WasteNoFood</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='registration.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #2e7d32;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .ngo-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: #fafafa;
+            transition: all 0.3s;
+        }
+        
+        .ngo-card:hover {
+            border-color: #1976d2;
+            background: #e3f2fd;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .ngo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .ngo-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1976d2;
+        }
+        
+        .ngo-address {
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        
+        .btn-select {
+            background: #4caf50;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .btn-select:hover {
+            background: #388e3c;
+        }
+        
+        .btn-back {
+            background: #607d8b;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        
+        .btn-back:hover {
+            background: #455a64;
+        }
+        
+        .actions {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .notification {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .notification i {
+            color: #856404;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-hand-holding-heart"></i> Select an NGO</h1>
+            <p>Choose which NGO should receive your leftover food donation</p>
+        </div>
+        
+        <div class="notification">
+            <i class="fas fa-info-circle"></i>
+            <strong>Report Submitted Successfully!</strong> Your leftover food report has been recorded. Please select an NGO below to assign this donation.
+        </div>
+        
+        <form method="POST" action="{{ url_for('assign_ngo_to_report') }}">
+            <input type="hidden" name="report_id" value="{{ report_id }}">
+            
+            {% if ngos %}
+                {% for ngo in ngos %}
+                <div class="ngo-card">
+                    <div class="ngo-header">
+                        <div class="ngo-name">
+                            <i class="fas fa-building"></i> {{ ngo.name }}
+                        </div>
+                        <input type="radio" name="ngo_id" value="{{ ngo.id }}" required style="transform: scale(1.5);">
+                    </div>
+                    <div class="ngo-address">
+                        <i class="fas fa-map-marker-alt"></i> {{ ngo.address }}
+                    </div>
+                    <button type="submit" class="btn-select">
+                        <i class="fas fa-check"></i> Assign to This NGO
+                    </button>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="notification" style="background: #ffebee; border-color: #ffcdd2;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>No NGOs Available</strong>
+                    <p>Currently, there are no verified NGOs available. Please try again later or contact support.</p>
+                </div>
+                <div class="actions">
+                    <a href="{{ url_for('report_leftover_food') }}" class="btn-back">
+                        <i class="fas fa-arrow-left"></i> Back to Report Form
+                    </a>
+                </div>
+            {% endif %}
+        </form>
+        
+        {% if ngos %}
+        <div class="actions">
+            <a href="{{ url_for('report_leftover_food') }}" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Back to Report Form
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

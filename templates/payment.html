@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='payment.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .flash-container { max-width: 1100px; margin: 20px auto; padding: 0 5%; }
+        .flash-msg { padding: 15px; margin-bottom: 20px; border-radius: 4px; border: 1px solid transparent; }
+        .flash-success { background-color: #d4edda; border-color: #c3e6cb; color: #155724; }
+        .flash-danger { background-color: #f8d7da; border-color: #f5c6cb; color: #721c24; }
+    </style>
+</head>
+<body>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-container">
+                {% for category, message in messages %}
+                    <div class="flash-msg flash-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="container">
+        <h1 class="title">Payment for {{ ngo_name }}</h1>
+
+        <form action="{{ url_for('payment') }}" method="POST">
+            <input type="hidden" name="ngo_id" value="{{ ngo_id }}">
+            <input type="hidden" name="payment_method" id="selected_method" value="card">
+
+            <div class="payment-container">
+                <!-- Left Section -->
+                <div class="payment-method">
+                    <h2>Select Payment Method</h2>
+                    <button type="button" class="tab active" onclick="showTab('card', this)">
+                        <i class="fas fa-credit-card"></i> Debit / Credit Card
+                    </button>
+                    <button type="button" class="tab" onclick="showTab('upi', this)">
+                        <i class="fas fa-mobile-alt"></i> UPI / QR Code
+                    </button>
+                </div>
+
+                <!-- Right Section -->
+                <div class="payment-details">
+                    <div class="input-group">
+                        <label>Donation Amount (₹)</label>
+                        <input type="number" name="amount" placeholder="Enter amount" required min="1">
+                    </div>
+
+                    <!-- CARD PAYMENT -->
+                    <div class="tab-content active" id="card">
+                        <h3>Card Details</h3>
+                        <div class="input-group">
+                            <label>Cardholder Name</label>
+                            <input type="text" placeholder="Enter cardholder name">
+                        </div>
+                        <div class="input-group">
+                            <label>Card Number</label>
+                            <input type="text" placeholder="1234 5678 9012 3456" maxlength="16">
+                        </div>
+                        <div class="row">
+                            <div class="input-group">
+                                <label>Expiry Date</label>
+                                <input type="text" placeholder="MM/YY">
+                            </div>
+                            <div class="input-group">
+                                <label>CVV</label>
+                                <input type="password" maxlength="3" placeholder="***">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- UPI PAYMENT -->
+                    <div class="tab-content" id="upi">
+                        <h3>UPI Payment</h3>
+                        <p>Pay instantly using any UPI app.</p>
+                        <div class="input-group">
+                            <label>UPI ID</label>
+                            <input type="text" placeholder="example@upi">
+                        </div>
+                        <p class="or">OR</p>
+                        <img src="{{ url_for('static', filename='images/qrcode.png') }}" alt="QR Code" class="qr" onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=WasteNoFood'">
+                    </div>
+
+                    <button type="submit" class="pay-btn">Proceed to Pay</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+<script>
+    function showTab(tabName, btn) {
+        document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+
+        btn.classList.add('active');
+        document.getElementById(tabName).classList.add('active');
+        document.getElementById('selected_method').value = tabName;
+    }
+</script>
+<footer class="card-footer">
+    <a class="back-btn" href="{{ url_for('index') }}">
+        <i class="fas fa-arrow-left"></i> Back to Home
+    </a>
+</footer>
+</body>
+</html>
