@@ -4,6 +4,15 @@ A Full Stack Web Application developed using **Python Flask, MySQL, HTML, CSS an
 
 ---
 
+
+## 🌐 Deployment
+
+🚀 **Experience the application live here:**
+
+👉 [Food Waste Management System](https://foodwastemanagement-tbcu.onrender.com/)
+
+The project is deployed successfully on **Render** and demonstrates a complete full-stack workflow including frontend, backend, database integration, and user management.
+
 ## 🚀 Features
 
 ✅ User Registration & Login
