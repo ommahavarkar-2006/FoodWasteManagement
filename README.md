@@ -1,4 +1,4 @@
-# 🍽️ Food Waste Management System
+## 🍽️ Food Waste Management System
 
 A Full Stack Web Application developed using **Python Flask, MySQL, HTML, CSS and JavaScript** that helps reduce food waste by connecting food donors with NGOs.
 
