@@ -167,7 +167,7 @@ B.Sc IT Student
 
 Full Stack Developer
 
-GitHub
+GitHub Repository
 
 https://github.com/ommahavarkar-2006
 
