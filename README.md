@@ -163,7 +163,7 @@ FoodWasteManagement
 
 **Om Mahavarkar**
 
-B.Sc IT Student
+B.Sc IT Graduate
 
 Full Stack Developer
 
