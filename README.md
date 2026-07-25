@@ -49,7 +49,7 @@ The project is deployed successfully on **Render** and demonstrates a complete f
 - Flask
 
 ### Database
-- MySQL (XAMPP)
+- MySQL(XAMPP)
 
 ### Tools
 - Git
