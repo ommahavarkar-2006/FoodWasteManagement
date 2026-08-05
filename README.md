@@ -5,7 +5,7 @@ A Full Stack Web Application developed using **Python, Flask, MySQL, HTML, CSS a
 ---
 
 
-## 🌐 Deploment
+## 🌐 Deployment
 
 🚀 **Experience the application live here:**
 
